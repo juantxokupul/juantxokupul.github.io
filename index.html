@@ -71,6 +71,10 @@
 
     // Move the ball
     function moveBall() {
+      if (ballX < 0 || ballX > canvas.width) {
+        ballX = canvas.width / 2;
+        ballY = canvas.height / 2;
+      }
       ballX += ballSpeedX;
       ballY += ballSpeedY;
 
