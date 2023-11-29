@@ -17,17 +17,36 @@
   <canvas id="pongCanvas" width="800" height="400"></canvas>
 
   <script>
-    // JavaScript code for game logic goes here
-    // Example: (This is a basic starting structure)
-
     const canvas = document.getElementById('pongCanvas');
     const ctx = canvas.getContext('2d');
 
-    // Define ball properties
+    // Paddle and ball properties
     let ballX = canvas.width / 2;
     let ballY = canvas.height / 2;
     let ballSpeedX = 5;
     let ballSpeedY = 5;
+    const paddleHeight = 100;
+    const paddleWidth = 10;
+    let paddle1Y = canvas.height / 2 - paddleHeight / 2;
+    let paddle2Y = canvas.height / 2 - paddleHeight / 2;
+
+    // Event listener for mouse movement to control paddles
+    canvas.addEventListener('mousemove', (e) => {
+      let mousePos = calculateMousePos(e);
+      paddle1Y = mousePos.y - (paddleHeight / 2);
+    });
+
+    // Function to get mouse position
+    function calculateMousePos(e) {
+      let rect = canvas.getBoundingClientRect();
+      let root = document.documentElement;
+      let mouseX = e.clientX - rect.left - root.scrollLeft;
+      let mouseY = e.clientY - rect.top - root.scrollTop;
+      return {
+        x: mouseX,
+        y: mouseY
+      };
+    }
 
     // Draw the ball
     function drawBall() {
@@ -38,21 +57,40 @@
       ctx.closePath();
     }
 
-    // Update the ball's position
+    // Draw paddles
+    function drawPaddles() {
+      ctx.fillStyle = 'blue';
+      ctx.fillRect(0, paddle1Y, paddleWidth, paddleHeight);
+      ctx.fillRect(canvas.width - paddleWidth, paddle2Y, paddleWidth, paddleHeight);
+    }
+
+    // Move the ball
     function moveBall() {
       ballX += ballSpeedX;
       ballY += ballSpeedY;
-    }
 
-    // Clear canvas and draw ball
-    function draw() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      drawBall();
-      moveBall();
+      // Ball collision with top and bottom walls
+      if (ballY < 0 || ballY > canvas.height) {
+        ballSpeedY = -ballSpeedY;
+      }
+
+      // Ball collision with paddles
+      if (ballX <= paddleWidth && ballY > paddle1Y && ballY < paddle1Y + paddleHeight ||
+        ballX >= canvas.width - paddleWidth && ballY > paddle2Y && ballY < paddle2Y + paddleHeight) {
+        ballSpeedX = -ballSpeedX;
+      }
     }
 
     // Game loop
-    setInterval(draw, 30);
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drawBall();
+      drawPaddles();
+      moveBall();
+      requestAnimationFrame(draw);
+    }
+
+    draw(); // Start the game loop
   </script>
 </body>
 </html>
