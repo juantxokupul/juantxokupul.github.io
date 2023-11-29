@@ -33,7 +33,12 @@
     // Event listener for mouse movement to control paddles
     canvas.addEventListener('mousemove', (e) => {
       let mousePos = calculateMousePos(e);
-      paddle1Y = mousePos.y - (paddleHeight / 2);
+      let paddleY = mousePos.y - (paddleHeight / 2);
+      if (mousePos.x < canvas.width / 2) {
+        paddle1Y = paddleY;
+      } else {
+        paddle2Y = paddleY;
+      }
     });
 
     // Function to get mouse position
